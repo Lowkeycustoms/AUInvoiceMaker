@@ -1,0 +1,159 @@
+plugins {
+    id 'com.android.application' version '8.7.3' apply false
+}
+plugins {
+    id 'com.android.application' version '8.7.3' apply false
+}
+
+# AU Invoice Maker v1.1.0
+
+## Added
+- Complete invoice preview before export.
+- Preview renders every page of the exact PDF invoice layout.
+- Save invoice as PNG.
+- Multi-page invoices are exported as one tall PNG image.
+- PNG files are saved to `Pictures/AU Invoice Maker`.
+- Preview, PDF and PNG share the same source rendering to keep layouts consistent.
+
+## Improved
+- Export tracking now avoids advancing the invoice number twice when the same invoice is exported in more than one format during the same session.
+- App subtitle and footer now show preview/PNG support.
+
+## Existing output locations
+- PDF: `Documents/AU Invoice Maker`
+- PNG: `Pictures/AU Invoice Maker`
+
+# AU Invoice Maker
+
+Native Android invoice app for Australian businesses.
+
+## Features
+- Australian Invoice / Tax Invoice mode
+- GST registered toggle and 10% GST calculations
+- GST-inclusive or GST-exclusive pricing
+- ABN checksum validation
+- Supplier/business profile saved locally
+- Custom business logo selected from phone storage
+- Customer details, ABN, email and address
+- Automatic invoice numbering
+- Issue date and due date pickers
+- Multiple line items with quantity, unit price and taxable/non-taxable status
+- Notes, purchase order/reference and payment/bank details
+- ATO-oriented validation, including buyer identity details for GST invoices of $1,000+
+- Full on-screen invoice preview using the exact generated PDF layout
+- Professional A4 PDF generation
+- Export the complete invoice as a PNG image (multi-page invoices become one tall PNG)
+- Save PDF to Documents/AU Invoice Maker
+- Share PDF through Android share sheet
+- Preview, PDF and PNG use the same invoice rendering so the output matches
+- Fully offline; no account or server required
+
+## Build
+Open this folder in Android Studio and select **Build > Build APK(s)**.
+
+Or, if Gradle 8.9+ and Android SDK 35 are installed:
+
+```bash
+gradle :app:assembleDebug
+```# No special ProGuard rules are required for v1.
+
+
+APK output:
+`app/build/outputs/apk/debug/app-debug.apk`plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.rarecustoms.auinvoice'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.rarecustoms.auinvoice'
+        minSdk 29
+        targetSdk 35
+        versionCode 2
+        versionName '1.1.0'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application
+        android:allowBackup="true"
+        android:label="AU Invoice Maker"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="false">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
+
+}
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#0A0D10</color>
+    <color name="panel">#121820</color>
+    <color name="cyan">#00E5FF</color>
+    <color name="white">#F7FBFF</color>
+    <color name="muted">#A7B5C2</color>
+</resources>
+
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AU Invoice Maker</string>
+</resources>
+
+<?xml version="1.0" encoding="utf-8"?>
+<resources>name: Build APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - run: yes | sdkmanager --licenses >/dev/null || true
+      - run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - run: gradle :app:assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AUInvoiceMaker-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+    <style name="AppTheme" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:navigationBarColor">@color/black</item>
+        <item name="android:statusBarColor">@color/black</item>
+        <item name="android:colorAccent">@color/cyan</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
+
+
+## Notes
+The app is designed for Android 10 (API 29) and newer. It does not transmit invoice data anywhere.
+
+pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS); repositories { google(); mavenCentral() } }
+rootProject.name = 'AUInvoiceMaker'
+include ':app'
